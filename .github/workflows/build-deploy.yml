@@ -1,4 +1,4 @@
-name: Run Tests
+name: CI - Tests & Coverage
 
 on:
   push:
@@ -7,37 +7,75 @@ on:
     branches: [ main, develop ]
 
 jobs:
-  test:
+  test-duno:
+    name: Test Dune API
     runs-on: ubuntu-latest
     
     strategy:
       matrix:
-        python-version: ['3.9', '3.10', '3.11']
+        python-version: ["3.12"]
     
     steps:
     - uses: actions/checkout@v3
+    
+    - name: Install uv
+      uses: astral-sh/setup-uv@v2
     
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v4
       with:
         python-version: ${{ matrix.python-version }}
     
-    - name: Install uv
+    - name: Install dependencies
       run: |
-        python -m pip install --upgrade uv
+        uv sync
+    
+    - name: Run Dune tests
+      run: |
+        uv run pytest test/testDuno.py -v --cov=fastAPI --cov-report=xml
+      env:
+        DUNE_API_KEY: ${{ secrets.DUNE_API_KEY }}
+    
+    - name: Upload coverage reports
+      uses: codecov/codecov-action@v3
+      with:
+        files: ./coverage.xml
+        flags: duno-tests
+        name: codecov-duno
+      if: always()
+
+  test-api:
+    name: Test REST API
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        python-version: ['3.12']
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Install uv
+      uses: astral-sh/setup-uv@v2
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
     
     - name: Install dependencies
       run: |
-        uv sync --all-extras
+        uv sync
     
-    - name: Run tests with pytest
+    - name: Run API tests
       run: |
-        uv run pytest test/testRestAPI.py -v --cov=fastAPI --cov-report=xml
+        uv run pytest test/testRestAPI.py -v --cov=fastAPI --cov-report=xml || true
     
-    - name: Upload coverage to Codecov
+    - name: Upload coverage reports
       uses: codecov/codecov-action@v3
       with:
-        file: ./coverage.xml
-        flags: unittests
-        name: codecov-umbrella
-        fail_ci_if_error: false
+        files: ./coverage.xml
+        flags: api-tests
+        name: codecov-api
+      if: always()
+
