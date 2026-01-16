@@ -81,12 +81,12 @@ class TestBirdeyePriceEndpoint:
         """Test successful price fetch"""
         mock_response = AsyncMock()
         mock_response.status_code = 200
-        mock_response.json.return_value = {
+        mock_response.json = AsyncMock(return_value={
             "address": "EPjFWaLb3hyccqJ1yckorbQnjsd4j6TSKiUvNrYzLT7",
             "price": 1.00,
             "liquidity": 1000000,
             "priceChange24h": 0.5
-        }
+        })
         
         mock_get.return_value = mock_response
         
@@ -133,7 +133,7 @@ class TestBirdeyeGainersEndpoint:
         """Test successful gainers fetch"""
         mock_response = AsyncMock()
         mock_response.status_code = 200
-        mock_response.json.return_value = {
+        mock_response.json = AsyncMock(return_value={
             "data": [
                 {
                     "address": "token1",
@@ -148,7 +148,7 @@ class TestBirdeyeGainersEndpoint:
                     "priceChange24h": 120.0
                 }
             ]
-        }
+        })
         
         mock_get.return_value = mock_response
         
@@ -169,7 +169,7 @@ class TestBirdeyeGainersEndpoint:
         """Test gainers endpoint with custom parameters"""
         mock_response = AsyncMock()
         mock_response.status_code = 200
-        mock_response.json.return_value = {"data": []}
+        mock_response.json = AsyncMock(return_value={"data": []})
         
         mock_get.return_value = mock_response
         
