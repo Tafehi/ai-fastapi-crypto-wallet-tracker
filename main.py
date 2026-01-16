@@ -1,20 +1,31 @@
-from fastAPI.RestAPI import app
+from pathlib import Path
+from fastapi import FastAPI
+from fastAPI.duno import router as duno
+import uvicorn
+
+
+app = FastAPI()
+
+# Include routers
+app.include_router(duno)
+
+
 
 def main():
     print("Hello from ai-fastapi-crypto-wallet-tracker!")
 
-
 if __name__ == "__main__":
-    main()
+    # Initialize database tables
+    uvicorn.run(app, host="127.0.0.1", port=8000)
 
-from dotenv import load_dotenv
-import os
-from PIL import Image
-import json
-import asyncio
-from mcp_server.client import agent_instance
-import streamlit as st
-from mcp_server import client
+# from dotenv import load_dotenv
+# import os
+# from PIL import Image
+# import json
+# import asyncio
+# from mcp_server.client import agent_instance
+# import streamlit as st
+# from mcp_server import client
 
 # ---------------------------------------
 # Command-line interface (commented out, kept for testing)
