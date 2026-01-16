@@ -28,7 +28,7 @@ jobs:
     
     - name: Install dependencies
       run: |
-        uv sync
+        uv sync --all-extras
     
     - name: Run Dune tests
       run: |
@@ -65,7 +65,7 @@ jobs:
     
     - name: Install dependencies
       run: |
-        uv sync
+        uv sync --all-extras
     
     - name: Run API tests
       run: |
