@@ -1,7 +1,7 @@
 import pytest
 from fastapi.testclient import TestClient
 from fastapi import FastAPI
-from unittest.mock import patch, AsyncMock
+from unittest.mock import patch, AsyncMock, MagicMock
 import sys
 from pathlib import Path
 
@@ -76,10 +76,11 @@ class TestTokenEndpoint:
 class TestBirdeyePriceEndpoint:
     """Test suite for GET /birdeye/price endpoint"""
     
-    @patch("httpx.AsyncClient.get")
-    def test_get_token_price_success(self, mock_get):
+    @patch("RestAPI.httpx.AsyncClient")
+    def test_get_token_price_success(self, mock_client_class):
         """Test successful price fetch"""
-        mock_response = AsyncMock()
+        # Create mock response
+        mock_response = MagicMock()
         mock_response.status_code = 200
         mock_response.json = AsyncMock(return_value={
             "address": "EPjFWaLb3hyccqJ1yckorbQnjsd4j6TSKiUvNrYzLT7",
@@ -88,7 +89,14 @@ class TestBirdeyePriceEndpoint:
             "priceChange24h": 0.5
         })
         
-        mock_get.return_value = mock_response
+        # Create mock client instance
+        mock_client = AsyncMock()
+        mock_client.get = AsyncMock(return_value=mock_response)
+        mock_client.__aenter__ = AsyncMock(return_value=mock_client)
+        mock_client.__aexit__ = AsyncMock(return_value=None)
+        
+        # Configure the class mock to return our client instance
+        mock_client_class.return_value = mock_client
         
         response = client.get(
             "/birdeye/price",
@@ -105,13 +113,18 @@ class TestBirdeyePriceEndpoint:
         response = client.get("/birdeye/price")
         assert response.status_code == 422  # Missing required parameters
     
-    @patch("httpx.AsyncClient.get")
-    def test_get_token_price_api_error(self, mock_get):
+    @patch("RestAPI.httpx.AsyncClient")
+    def test_get_token_price_api_error(self, mock_client_class):
         """Test price endpoint API error handling"""
-        mock_response = AsyncMock()
+        mock_response = MagicMock()
         mock_response.status_code = 401  # Unauthorized
         
-        mock_get.return_value = mock_response
+        mock_client = AsyncMock()
+        mock_client.get = AsyncMock(return_value=mock_response)
+        mock_client.__aenter__ = AsyncMock(return_value=mock_client)
+        mock_client.__aexit__ = AsyncMock(return_value=None)
+        
+        mock_client_class.return_value = mock_client
         
         response = client.get(
             "/birdeye/price",
@@ -128,10 +141,10 @@ class TestBirdeyePriceEndpoint:
 class TestBirdeyeGainersEndpoint:
     """Test suite for GET /birdeye/trader-board/gainers endpoint"""
     
-    @patch("httpx.AsyncClient.get")
-    def test_get_gainers_success(self, mock_get):
+    @patch("RestAPI.httpx.AsyncClient")
+    def test_get_gainers_success(self, mock_client_class):
         """Test successful gainers fetch"""
-        mock_response = AsyncMock()
+        mock_response = MagicMock()
         mock_response.status_code = 200
         mock_response.json = AsyncMock(return_value={
             "data": [
@@ -150,7 +163,12 @@ class TestBirdeyeGainersEndpoint:
             ]
         })
         
-        mock_get.return_value = mock_response
+        mock_client = AsyncMock()
+        mock_client.get = AsyncMock(return_value=mock_response)
+        mock_client.__aenter__ = AsyncMock(return_value=mock_client)
+        mock_client.__aexit__ = AsyncMock(return_value=None)
+        
+        mock_client_class.return_value = mock_client
         
         response = client.get(
             "/birdeye/trader-board/gainers",
@@ -164,14 +182,19 @@ class TestBirdeyeGainersEndpoint:
         response = client.get("/birdeye/trader-board/gainers")
         assert response.status_code == 422  # Missing required parameter
     
-    @patch("httpx.AsyncClient.get")
-    def test_get_gainers_custom_params(self, mock_get):
+    @patch("RestAPI.httpx.AsyncClient")
+    def test_get_gainers_custom_params(self, mock_client_class):
         """Test gainers endpoint with custom parameters"""
-        mock_response = AsyncMock()
+        mock_response = MagicMock()
         mock_response.status_code = 200
         mock_response.json = AsyncMock(return_value={"data": []})
         
-        mock_get.return_value = mock_response
+        mock_client = AsyncMock()
+        mock_client.get = AsyncMock(return_value=mock_response)
+        mock_client.__aenter__ = AsyncMock(return_value=mock_client)
+        mock_client.__aexit__ = AsyncMock(return_value=None)
+        
+        mock_client_class.return_value = mock_client
         
         response = client.get(
             "/birdeye/trader-board/gainers",
@@ -184,13 +207,18 @@ class TestBirdeyeGainersEndpoint:
         
         assert response.status_code == 200
     
-    @patch("httpx.AsyncClient.get")
-    def test_get_gainers_api_error(self, mock_get):
+    @patch("RestAPI.httpx.AsyncClient")
+    def test_get_gainers_api_error(self, mock_client_class):
         """Test gainers endpoint API error handling"""
-        mock_response = AsyncMock()
+        mock_response = MagicMock()
         mock_response.status_code = 500
         
-        mock_get.return_value = mock_response
+        mock_client = AsyncMock()
+        mock_client.get = AsyncMock(return_value=mock_response)
+        mock_client.__aenter__ = AsyncMock(return_value=mock_client)
+        mock_client.__aexit__ = AsyncMock(return_value=None)
+        
+        mock_client_class.return_value = mock_client
         
         response = client.get(
             "/birdeye/trader-board/gainers",
