@@ -79,7 +79,7 @@ async def get_token_price(
             headers={"X-API-KEY": api_key}
         )
         if response.status_code == 200:
-            return response.json()
+            return await response.json()
         return {"error": f"Failed to fetch price: {response.status_code}"}
 
 
@@ -102,7 +102,7 @@ async def get_trader_board_gainers(
                 timeout=10.0
             )
             if response.status_code == 200:
-                data = response.json()
+                data = await response.json()
                 print(f"Fetched {limit} top gainers from Birdeye")
                 return data
             return {"error": f"Failed to fetch gainers: {response.status_code}"}
