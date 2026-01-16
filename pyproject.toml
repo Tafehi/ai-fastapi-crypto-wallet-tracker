@@ -15,5 +15,12 @@ dependencies = [
     "uvicorn>=0.40.0",
 ]
 
+[project.optional-dependencies]
+dev = [
+    "pytest>=9.0.0",
+    "pytest-cov>=7.0.0",
+    "httpx>=0.28.0",
+]
+
 [tool.setuptools]
 packages = ["fastAPI", "models", "mcp_server"]
