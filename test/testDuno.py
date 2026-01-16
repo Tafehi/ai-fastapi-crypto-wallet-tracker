@@ -1,4 +1,6 @@
 """Tests for Dune API FastAPI endpoints."""
+import sys
+import os
 import pytest
 from unittest.mock import patch, MagicMock
 from fastapi.testclient import TestClient
